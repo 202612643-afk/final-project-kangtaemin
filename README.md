@@ -54,4 +54,4 @@
 
 1. 저장소를 클론합니다.
 ```bash
-git clone https://github.com/스마트시티공학부 202612643 강태민/final-project.git
+https://github.com/스마트시티공학부 202612643 강태민/final-project.git
