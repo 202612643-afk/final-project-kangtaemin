@@ -40,5 +40,7 @@
 | 3D 레이아웃 추천 | 크기 제한 알림 | 예산 실시간 합산 |
 | :---: | :---: | :---: |
 | <img width="419" height="768" alt="image" src="https://github.com/user-attachments/assets/498935a2-07e9-4d05-b225-501bbe1d6a32" />
- | <img src="https://via.placeholder.com/200x400?text=Size+Warning" width="200"> | <img src="https://via.placeholder.com/200x400?text=Budget+Calc" width="200"> |
+ | <img width="419" height="768" alt="image" src="https://github.com/user-attachments/assets/02b2db9b-0778-4ea5-bba2-4dcbd0067ac1" />
+ | <img width="419" height="768" alt="KakaoTalk_20260611_205659011" src="https://github.com/user-attachments/assets/b49c48f3-0ae1-42f3-bddc-a704983cfa9a" />
+ |
 | *[설명: 3D 배치 추천 화면]* | *[설명: 경고 팝업 화면]* | *[설명: 예산 내역 화면]* |
