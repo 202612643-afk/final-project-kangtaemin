@@ -39,5 +39,5 @@
 ## 📱 서비스 화면 (Screenshots)
 | 3D 레이아웃 추천 | 크기 제한 알림 | 예산 실시간 합산 |
 | :---: | :---: | :---: |
-| <img src="https://via.placeholder.com/200x400?text=3D+Layout" width="200"> | <img src="https://via.placeholder.com/200x400?text=Size+Warning" width="200"> | <img src="https://via.placeholder.com/200x400?text=Budget+Calc" width="200"> |
+| "C:\Users\taemi\OneDrive\문서\카카오톡 받은 파일\KakaoTalk_20260611_205633740.jpg" | <img src="https://via.placeholder.com/200x400?text=Size+Warning" width="200"> | <img src="https://via.placeholder.com/200x400?text=Budget+Calc" width="200"> |
 | *[설명: 3D 배치 추천 화면]* | *[설명: 경고 팝업 화면]* | *[설명: 예산 내역 화면]* |
