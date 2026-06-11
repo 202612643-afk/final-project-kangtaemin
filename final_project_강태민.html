@@ -1,0 +1,456 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);color:var(--color-text-primary)}
+.app{display:grid;grid-template-columns:300px 1fr;gap:0;min-height:600px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+.sidebar{background:var(--color-background-secondary);border-right:0.5px solid var(--color-border-tertiary);padding:1rem;display:flex;flex-direction:column;gap:1rem;overflow-y:auto;max-height:700px}
+.main{display:flex;flex-direction:column;background:var(--color-background-primary)}
+.section-label{font-size:11px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.input-row{display:flex;gap:6px;align-items:center}
+.input-row input{flex:1;padding:6px 8px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);font-size:13px}
+.input-row span{font-size:12px;color:var(--color-text-secondary);white-space:nowrap}
+.dim-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:4px}
+.btn{width:100%;padding:8px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);font-size:13px;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--color-background-secondary)}
+.btn.primary{background:#534AB7;color:#fff;border-color:#534AB7}
+.btn.primary:hover{background:#3C3489}
+.furniture-list{display:flex;flex-direction:column;gap:4px}
+.fitem{display:flex;align-items:center;gap:8px;padding:7px 10px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);cursor:pointer;transition:border-color .15s}
+.fitem:hover{border-color:var(--color-border-secondary)}
+.fitem.selected{border-color:#534AB7;background:#EEEDFE}
+.fitem-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.fitem-info{flex:1;min-width:0}
+.fitem-name{font-size:12px;font-weight:500}
+.fitem-size{font-size:11px;color:var(--color-text-secondary)}
+.fitem-price{font-size:12px;color:#534AB7;font-weight:500;white-space:nowrap}
+.fitem-add{font-size:18px;color:var(--color-text-tertiary);line-height:1}
+.fitem.added .fitem-add{color:#534AB7}
+.canvas-area{flex:1;position:relative}
+canvas{display:block;width:100%;height:100%}
+.toolbar{display:flex;gap:6px;padding:8px 12px;border-bottom:0.5px solid var(--color-border-tertiary);align-items:center;flex-wrap:wrap}
+.tbtn{padding:4px 10px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-secondary);font-size:12px;cursor:pointer}
+.tbn-active,.tbn:hover{background:var(--color-background-secondary)}
+.budget-bar{padding:10px 12px;border-top:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;gap:12px}
+.budget-label{font-size:12px;color:var(--color-text-secondary);white-space:nowrap}
+.budget-track{flex:1;height:6px;background:var(--color-background-secondary);border-radius:3px;overflow:hidden}
+.budget-fill{height:100%;border-radius:3px;background:#534AB7;transition:width .3s,background .3s}
+.budget-amount{font-size:12px;font-weight:500;white-space:nowrap}
+.alert{padding:6px 10px;border-radius:var(--border-radius-md);font-size:12px;margin-top:4px;display:none}
+.alert.warn{background:#FAEEDA;color:#854F0B;border:0.5px solid #FAC775;display:block}
+.alert.danger{background:#FCEBEB;color:#A32D2D;border:0.5px solid #F7C1C1;display:block}
+.placed-list{display:flex;flex-direction:column;gap:3px;max-height:120px;overflow-y:auto}
+.placed-item{display:flex;align-items:center;gap:6px;padding:4px 8px;border-radius:var(--border-radius-md);background:var(--color-background-primary);font-size:12px}
+.placed-remove{cursor:pointer;color:var(--color-text-tertiary);margin-left:auto;font-size:16px;line-height:1}
+.placed-remove:hover{color:#A32D2D}
+.view-tabs{display:flex;gap:0}
+.vtab{padding:5px 12px;font-size:12px;cursor:pointer;border-bottom:2px solid transparent;color:var(--color-text-secondary)}
+.vtab.active{border-color:#534AB7;color:#534AB7;font-weight:500}
+</style>
+
+<div class="app" id="app">
+  <div class="sidebar">
+    <div>
+      <div class="section-label">방 치수 설정</div>
+      <div class="dim-grid">
+        <div>
+          <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:3px">가로 (m)</div>
+          <input type="number" id="roomW" value="4" min="2" max="10" step="0.1" style="width:100%;padding:6px 8px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);font-size:13px">
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:3px">세로 (m)</div>
+          <input type="number" id="roomD" value="3.5" min="2" max="10" step="0.1" style="width:100%;padding:6px 8px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);font-size:13px">
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:3px">높이 (m)</div>
+          <input type="number" id="roomH" value="2.4" min="2" max="4" step="0.1" style="width:100%;padding:6px 8px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);font-size:13px">
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:3px">예산 (만원)</div>
+          <input type="number" id="budget" value="200" min="50" max="2000" step="10" style="width:100%;padding:6px 8px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);font-size:13px">
+        </div>
+      </div>
+      <button class="btn primary" onclick="applyRoom()" style="margin-top:6px">방 크기 적용 및 초기화</button>
+    </div>
+
+    <div>
+      <div class="section-label">🤖 AI 자동 배치</div>
+      <button class="btn" onclick="autoArrange()" style="margin-bottom:4px">최적 배치 자동 추천</button>
+    </div>
+
+    <div>
+      <div class="section-label">가구 선택 (클릭하여 배치)</div>
+      <div class="furniture-list" id="furnitureList"></div>
+    </div>
+
+    <div>
+      <div class="section-label">배치된 가구</div>
+      <div class="placed-list" id="placedList">
+        <div style="font-size:12px;color:var(--color-text-tertiary);padding:4px 0">가구를 선택하여 배치하세요</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="toolbar">
+      <div class="view-tabs">
+        <div class="vtab active" id="tab3d" onclick="setView('3d')">3D 뷰</div>
+        <div class="vtab" id="tab2d" onclick="setView('2d')">평면도</div>
+      </div>
+      <div style="flex:1"></div>
+      <button class="tbn" onclick="resetCamera()" style="padding:4px 10px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-secondary);font-size:12px;cursor:pointer">카메라 초기화</button>
+      <button class="tbn" onclick="clearAll()" style="padding:4px 10px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-secondary);font-size:12px;cursor:pointer">전체 지우기</button>
+    </div>
+    <div id="alertBox" class="alert" style="margin:6px 12px"></div>
+    <div class="canvas-area">
+      <canvas id="c"></canvas>
+    </div>
+    <div class="budget-bar">
+      <span class="budget-label">예산 사용률</span>
+      <div class="budget-track"><div class="budget-fill" id="budgetFill" style="width:0%"></div></div>
+      <span class="budget-amount" id="budgetAmt">₩0 / ₩200만</span>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const FURNITURE = [
+  {id:'bed',name:'싱글 침대',w:1.0,d:2.0,h:0.45,color:0x534AB7,price:35,icon:'🛏️',essential:true},
+  {id:'desk',name:'컴퓨터 책상',w:1.2,d:0.6,h:0.75,color:0x1D9E75,price:25,icon:'🖥️',essential:true},
+  {id:'wardrobe',name:'옷장',w:1.2,d:0.6,h:1.8,color:0xD85A30,price:40,icon:'🚪',essential:true},
+  {id:'sofa',name:'1인 소파',w:0.8,d:0.9,h:0.8,color:0xBA7517,price:30,icon:'🛋️',essential:false},
+  {id:'shelf',name:'책장',w:0.8,d:0.3,h:1.5,color:0x378ADD,price:20,icon:'📚',essential:false},
+  {id:'table',name:'다용도 테이블',w:0.6,d:0.6,h:0.75,color:0x639922,price:15,icon:'🪑',essential:false},
+  {id:'tv',name:'TV 거치대',w:1.2,d:0.4,h:1.2,color:0x888780,price:20,icon:'📺',essential:false},
+  {id:'dresser',name:'서랍장',w:0.8,d:0.45,h:0.9,color:0x993C1D,price:18,icon:'🗄️',essential:false},
+];
+
+let scene,camera,renderer,roomGroup,furnitureGroup;
+let placed=[];
+let roomW=4,roomD=3.5,roomH=2.4,budgetMax=200;
+let viewMode='3d';
+let isDragging=false,prevMouse={x:0,y:0};
+let cameraAngle={theta:Math.PI/4,phi:Math.PI/3,r:8};
+let selectedFurnitureId=null;
+
+function initThree(){
+  const canvas=document.getElementById('c');
+  const cont=canvas.parentElement;
+  renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.shadowMap.enabled=true;
+  renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  resize();
+
+  scene=new THREE.Scene();
+  scene.background=new THREE.Color(0xf8f8f8);
+
+  camera=new THREE.PerspectiveCamera(45,cont.clientWidth/cont.clientHeight,0.1,100);
+  updateCamera();
+
+  const amb=new THREE.AmbientLight(0xffffff,0.6);
+  scene.add(amb);
+  const dir=new THREE.DirectionalLight(0xffffff,0.8);
+  dir.position.set(5,10,5);
+  dir.castShadow=true;
+  dir.shadow.mapSize.set(1024,1024);
+  scene.add(dir);
+  const dir2=new THREE.DirectionalLight(0xffffff,0.3);
+  dir2.position.set(-3,8,-3);
+  scene.add(dir2);
+
+  roomGroup=new THREE.Group();
+  furnitureGroup=new THREE.Group();
+  scene.add(roomGroup);
+  scene.add(furnitureGroup);
+
+  buildRoom();
+
+  canvas.addEventListener('mousedown',e=>{isDragging=true;prevMouse={x:e.clientX,y:e.clientY}});
+  canvas.addEventListener('mousemove',e=>{
+    if(!isDragging)return;
+    const dx=e.clientX-prevMouse.x;
+    const dy=e.clientY-prevMouse.y;
+    cameraAngle.theta-=dx*0.01;
+    cameraAngle.phi=Math.max(0.2,Math.min(Math.PI/2-0.05,cameraAngle.phi-dy*0.01));
+    prevMouse={x:e.clientX,y:e.clientY};
+    updateCamera();
+  });
+  canvas.addEventListener('mouseup',()=>isDragging=false);
+  canvas.addEventListener('wheel',e=>{
+    cameraAngle.r=Math.max(3,Math.min(20,cameraAngle.r+e.deltaY*0.01));
+    updateCamera();
+  });
+
+  animate();
+  window.addEventListener('resize',resize);
+}
+
+function updateCamera(){
+  const cx=roomW/2,cz=roomD/2;
+  camera.position.set(
+    cx+cameraAngle.r*Math.sin(cameraAngle.phi)*Math.sin(cameraAngle.theta),
+    cameraAngle.r*Math.cos(cameraAngle.phi),
+    cz+cameraAngle.r*Math.sin(cameraAngle.phi)*Math.cos(cameraAngle.theta)
+  );
+  camera.lookAt(cx,0,cz);
+}
+
+function resize(){
+  const cont=document.getElementById('c').parentElement;
+  const w=cont.clientWidth,h=Math.max(cont.clientHeight,350);
+  renderer.setSize(w,h,false);
+  if(camera){camera.aspect=w/h;camera.updateProjectionMatrix();}
+}
+
+function buildRoom(){
+  roomGroup.clear();
+  const mat=new THREE.MeshLambertMaterial;
+
+  const floorGeo=new THREE.PlaneGeometry(roomW,roomD);
+  const floorMat=new THREE.MeshLambertMaterial({color:0xE8E4DC});
+  const floor=new THREE.Mesh(floorGeo,floorMat);
+  floor.rotation.x=-Math.PI/2;
+  floor.position.set(roomW/2,0,roomD/2);
+  floor.receiveShadow=true;
+  roomGroup.add(floor);
+
+  const wallMat=new THREE.MeshLambertMaterial({color:0xF0EDE8,side:THREE.FrontSide});
+  const wallBMat=new THREE.MeshLambertMaterial({color:0xEAE6E0,side:THREE.FrontSide});
+
+  [[roomW,roomH,0,roomH/2,roomD/2,0,'z'],
+   [roomD,roomH,0,roomH/2,0,90,'x'],
+   [roomD,roomH,roomW,roomH/2,roomD/2,90,'x']
+  ].forEach(([w,h,px,py,pz,ry,ax])=>{
+    const g=new THREE.PlaneGeometry(w,h);
+    const m=new THREE.Mesh(g,wallMat);
+    m.position.set(px,py,pz);
+    if(ax==='z')m.rotation.y=Math.PI;
+    else m.rotation.y=ry===90?(px===0?Math.PI/2:-Math.PI/2):0;
+    roomGroup.add(m);
+  });
+
+  const gridHelper=new THREE.GridHelper(Math.max(roomW,roomD)*2,20,0xcccccc,0xdddddd);
+  gridHelper.position.set(roomW/2,0.01,roomD/2);
+  roomGroup.add(gridHelper);
+}
+
+function makeFurnitureMesh(f,x,z){
+  const g=new THREE.BoxGeometry(f.w,f.h,f.d);
+  const mat=new THREE.MeshLambertMaterial({color:f.color});
+  const mesh=new THREE.Mesh(g,mat);
+  mesh.position.set(x+f.w/2,f.h/2,z+f.d/2);
+  mesh.castShadow=true;
+  mesh.receiveShadow=true;
+
+  const edgeGeo=new THREE.EdgesGeometry(g);
+  const edgeMat=new THREE.LineBasicMaterial({color:0x000000,transparent:true,opacity:0.15});
+  const edges=new THREE.LineSegments(edgeGeo,edgeMat);
+  mesh.add(edges);
+
+  return mesh;
+}
+
+function redrawFurniture(){
+  furnitureGroup.clear();
+  placed.forEach(p=>{
+    const mesh=makeFurnitureMesh(p.f,p.x,p.z);
+    furnitureGroup.add(mesh);
+  });
+  updatePlacedList();
+  updateBudget();
+  checkAlerts();
+}
+
+function animate(){
+  requestAnimationFrame(animate);
+  renderer.render(scene,camera);
+}
+
+function renderFurnitureList(){
+  const list=document.getElementById('furnitureList');
+  list.innerHTML='';
+  FURNITURE.forEach(f=>{
+    const div=document.createElement('div');
+    div.className='fitem'+(selectedFurnitureId===f.id?' selected':'');
+    div.innerHTML=`<div class="fitem-dot" style="background:#${f.color.toString(16).padStart(6,'0')}"></div>
+      <div class="fitem-info"><div class="fitem-name">${f.icon} ${f.name}</div>
+      <div class="fitem-size">${f.w}×${f.d}m · 높이${f.h}m</div></div>
+      <div class="fitem-price">${f.price}만원</div>`;
+    div.onclick=()=>selectFurniture(f.id);
+    list.appendChild(div);
+  });
+}
+
+function selectFurniture(id){
+  selectedFurnitureId=id;
+  renderFurnitureList();
+  const f=FURNITURE.find(x=>x.id===id);
+  if(!f)return;
+  placeFurniture(f);
+}
+
+function placeFurniture(f){
+  const margin=0.1;
+  let x=margin,z=margin;
+  let placed_ok=false;
+
+  for(let attempts=0;attempts<50;attempts++){
+    x=margin+Math.random()*(roomW-f.w-2*margin);
+    z=margin+Math.random()*(roomD-f.d-2*margin);
+    if(x<0||z<0||x+f.w>roomW||z+f.d>roomD)continue;
+    if(!overlaps(x,z,f)){placed_ok=true;break;}
+  }
+
+  if(!placed_ok){
+    showAlert('이 가구를 배치할 공간이 부족합니다!','danger');
+    return;
+  }
+
+  placed.push({f,x,z,id:Date.now()});
+  redrawFurniture();
+  selectedFurnitureId=null;
+  renderFurnitureList();
+}
+
+function overlaps(nx,nz,nf){
+  return placed.some(p=>{
+    const margin=0.15;
+    return !(nx+nf.w+margin<=p.x||nx>=p.x+p.f.w+margin||nz+nf.d+margin<=p.z||nz>=p.z+p.f.d+margin);
+  });
+}
+
+function updatePlacedList(){
+  const list=document.getElementById('placedList');
+  if(placed.length===0){
+    list.innerHTML='<div style="font-size:12px;color:var(--color-text-tertiary);padding:4px 0">가구를 선택하여 배치하세요</div>';
+    return;
+  }
+  list.innerHTML='';
+  placed.forEach((p,i)=>{
+    const div=document.createElement('div');
+    div.className='placed-item';
+    div.innerHTML=`<span style="font-size:10px;width:8px;height:8px;border-radius:2px;background:#${p.f.color.toString(16).padStart(6,'0')};display:inline-block;flex-shrink:0"></span>
+      <span>${p.f.icon} ${p.f.name}</span>
+      <span style="color:var(--color-text-secondary)">${p.f.price}만원</span>
+      <span class="placed-remove" onclick="removePlaced(${p.id})">×</span>`;
+    list.appendChild(div);
+  });
+}
+
+function removePlaced(id){
+  placed=placed.filter(p=>p.id!==id);
+  redrawFurniture();
+}
+
+function updateBudget(){
+  const total=placed.reduce((s,p)=>s+p.f.price,0);
+  const pct=Math.min(100,total/budgetMax*100);
+  const fill=document.getElementById('budgetFill');
+  fill.style.width=pct+'%';
+  fill.style.background=pct>100?'#E24B4A':pct>80?'#EF9F27':'#534AB7';
+  document.getElementById('budgetAmt').textContent=`₩${total}만 / ₩${budgetMax}만`;
+}
+
+function checkAlerts(){
+  const total=placed.reduce((s,p)=>s+p.f.price,0);
+  const usedArea=placed.reduce((s,p)=>s+p.f.w*p.f.d,0);
+  const totalArea=roomW*roomD;
+  const areaRatio=usedArea/totalArea;
+
+  if(total>budgetMax){
+    showAlert(`⚠️ 예산 초과! 현재 ${total}만원 (예산 ${budgetMax}만원)`,'danger');
+  }else if(areaRatio>0.65){
+    showAlert(`⚠️ 가구가 방 면적의 ${Math.round(areaRatio*100)}%를 차지합니다. 동선 확보를 권장합니다.`,'warn');
+  }else{
+    hideAlert();
+  }
+}
+
+function showAlert(msg,type){
+  const el=document.getElementById('alertBox');
+  el.textContent=msg;
+  el.className='alert '+type;
+  el.style.display='block';
+}
+
+function hideAlert(){
+  document.getElementById('alertBox').style.display='none';
+}
+
+function applyRoom(){
+  roomW=parseFloat(document.getElementById('roomW').value)||4;
+  roomD=parseFloat(document.getElementById('roomD').value)||3.5;
+  roomH=parseFloat(document.getElementById('roomH').value)||2.4;
+  budgetMax=parseFloat(document.getElementById('budget').value)||200;
+  placed=[];
+  buildRoom();
+  redrawFurniture();
+  cameraAngle.r=Math.max(roomW,roomD)*1.8;
+  updateCamera();
+}
+
+function autoArrange(){
+  placed=[];
+  const margin=0.15;
+  const candidates=[
+    FURNITURE.find(f=>f.id==='bed'),
+    FURNITURE.find(f=>f.id==='wardrobe'),
+    FURNITURE.find(f=>f.id==='desk'),
+  ];
+
+  const positions=[
+    {x:margin,z:margin},
+    {x:roomW-FURNITURE.find(f=>f.id==='wardrobe').w-margin,z:margin},
+    {x:roomW-FURNITURE.find(f=>f.id==='desk').w-margin,z:roomD-FURNITURE.find(f=>f.id==='desk').d-margin},
+  ];
+
+  candidates.forEach((f,i)=>{
+    if(!f)return;
+    const pos=positions[i];
+    if(pos.x+f.w<=roomW && pos.z+f.d<=roomD){
+      placed.push({f,x:pos.x,z:pos.z,id:Date.now()+i});
+    }
+  });
+
+  const shelf=FURNITURE.find(f=>f.id==='shelf');
+  const sx=margin,sz=roomD-shelf.d-margin;
+  if(sx+shelf.w<=roomW&&!overlaps(sx,sz,shelf)){
+    placed.push({f:shelf,x:sx,z:sz,id:Date.now()+10});
+  }
+
+  redrawFurniture();
+}
+
+function clearAll(){
+  placed=[];
+  redrawFurniture();
+  hideAlert();
+}
+
+function resetCamera(){
+  cameraAngle={theta:Math.PI/4,phi:Math.PI/3,r:Math.max(roomW,roomD)*1.8};
+  updateCamera();
+}
+
+function setView(mode){
+  viewMode=mode;
+  document.getElementById('tab3d').className='vtab'+(mode==='3d'?' active':'');
+  document.getElementById('tab2d').className='vtab'+(mode==='2d'?' active':'');
+  if(mode==='2d'){
+    cameraAngle.phi=0.05;
+    cameraAngle.theta=Math.PI;
+    cameraAngle.r=Math.max(roomW,roomD)*1.6;
+  }else{
+    cameraAngle.phi=Math.PI/3;
+    cameraAngle.theta=Math.PI/4;
+    cameraAngle.r=Math.max(roomW,roomD)*1.8;
+  }
+  updateCamera();
+}
+
+renderFurnitureList();
+initThree();
+applyRoom();
+setTimeout(()=>autoArrange(),300);
+</script>
