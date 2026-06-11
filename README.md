@@ -54,4 +54,4 @@
 
 1. 저장소를 클론합니다.
 ```bash
-git clone [https://github.com/](https://github.com/)[본인_깃허브_ID]/[저장소_이름].git
+git clone [https://github.com/](https://github.com/)[202612643]/[final-project-강태민].git
