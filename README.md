@@ -54,4 +54,4 @@
 
 1. 저장소를 클론합니다.
 ```bash
-[https://github.com/202612643/final-project-kangtaemin.git](https://github.com/202612643-afk/final-project-kangtaemin.git)
+https://github.com/202612643-afk/final-project-kangtaemin.git
