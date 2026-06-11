@@ -41,5 +41,3 @@
 | :---: | :---: | :---: |
 | <img src="https://via.placeholder.com/200x400?text=3D+Layout" width="200"> | <img src="https://via.placeholder.com/200x400?text=Size+Warning" width="200"> | <img src="https://via.placeholder.com/200x400?text=Budget+Calc" width="200"> |
 | *[설명: 3D 배치 추천 화면]* | *[설명: 경고 팝업 화면]* | *[설명: 예산 내역 화면]* |
-
-> 💡 **Tip:** `https://via.placeholder.com/...` 부분을 실제 앱 구동 캡처 이미지 경로(`img/screen1.png` 등)로 대체하세요.
